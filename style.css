@@ -1,3 +1,9 @@
+@property --portrait-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 :root {
   color-scheme: light;
   --bg: #f7f7f4;
@@ -10,6 +16,12 @@
   --primary-strong: #115e59;
   --accent: #f59e0b;
   --accent-soft: rgba(245, 158, 11, 0.16);
+  --portrait-border-1: #99f6e4;
+  --portrait-border-2: #5eead4;
+  --portrait-border-3: #93c5fd;
+  --portrait-border-4: #fde68a;
+  --portrait-border-5: #fbcfe8;
+  --portrait-border-6: #ddd6fe;
   --shadow: 0 24px 70px rgba(23, 23, 23, 0.12);
   --radius: 8px;
   --header-height: 76px;
@@ -27,6 +39,12 @@
   --primary-strong: #5eead4;
   --accent: #fbbf24;
   --accent-soft: rgba(251, 191, 36, 0.14);
+  --portrait-border-1: #0f766e;
+  --portrait-border-2: #155e75;
+  --portrait-border-3: #1d4ed8;
+  --portrait-border-4: #92400e;
+  --portrait-border-5: #7e22ce;
+  --portrait-border-6: #9f1239;
   --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
 }
 
@@ -404,32 +422,50 @@ h3 {
   border-radius: calc(var(--radius) + 6px);
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   box-shadow:
-    0 28px 70px rgba(0, 0, 0, 0.18),
+    0 34px 86px rgba(0, 0, 0, 0.22),
     inset 0 0 0 1px color-mix(in srgb, var(--border) 70%, transparent);
   backdrop-filter: blur(16px);
+  overflow: visible;
 }
 
 .portrait-frame::before {
   content: "";
   position: absolute;
-  inset: auto 26px -12px 26px;
-  height: 42px;
+  inset: -3px;
   z-index: -1;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--primary) 32%, transparent);
-  filter: blur(22px);
-  opacity: 0.55;
+  border-radius: calc(var(--radius) + 9px);
+  background: conic-gradient(
+    from var(--portrait-angle),
+    var(--portrait-border-1),
+    var(--portrait-border-2),
+    var(--portrait-border-3),
+    var(--portrait-border-4),
+    var(--portrait-border-5),
+    var(--portrait-border-6),
+    var(--portrait-border-1)
+  );
+  animation: portrait-border-spin 11s linear infinite, portrait-color-shift 6.5s ease-in-out infinite alternate;
 }
 
 .portrait-frame::after {
   content: "";
   position: absolute;
-  inset: 22px 22px auto auto;
-  width: 58px;
-  height: 6px;
-  border-radius: var(--radius);
-  background: var(--primary);
-  opacity: 0.7;
+  inset: -10px;
+  z-index: -2;
+  border-radius: calc(var(--radius) + 14px);
+  background: conic-gradient(
+    from var(--portrait-angle),
+    var(--portrait-border-3),
+    var(--portrait-border-1),
+    var(--portrait-border-4),
+    var(--portrait-border-2),
+    var(--portrait-border-5),
+    var(--portrait-border-6),
+    var(--portrait-border-3)
+  );
+  filter: blur(24px);
+  opacity: 0.48;
+  animation: portrait-border-spin 15s linear infinite reverse, portrait-glow-shift 8s ease-in-out infinite alternate;
 }
 
 .portrait-frame img {
@@ -439,6 +475,39 @@ h3 {
   object-position: center;
   border-radius: var(--radius);
   box-shadow: none;
+}
+
+@keyframes portrait-border-spin {
+  to {
+    --portrait-angle: 360deg;
+  }
+}
+
+@keyframes portrait-color-shift {
+  0% {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+
+  100% {
+    filter: hue-rotate(36deg) saturate(1.32);
+  }
+}
+
+@keyframes portrait-glow-shift {
+  0% {
+    filter: blur(24px) hue-rotate(0deg) saturate(1.05);
+  }
+
+  100% {
+    filter: blur(24px) hue-rotate(40deg) saturate(1.38);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-frame::before,
+  .portrait-frame::after {
+    animation: none;
+  }
 }
 
 .portrait-badge {
